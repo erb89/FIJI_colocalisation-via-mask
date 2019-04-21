@@ -1,2 +1,2 @@
 # FIJI_colocalisation-via-mask
-Analyse one channel based on mask from another
+Batch analyse one channel based on mask from another
