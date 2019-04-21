@@ -1,0 +1,64 @@
+#@File(label = "Input directory", style = "directory") input1
+#@File(label = "Input directory", style = "directory") input2
+#@File(label = "Output directory", style = "directory") output
+#@ String (label = "File suffix", value = ".tif") suffix
+
+processFolder(input1, input2);
+
+//if image calculator for green mask make file 2 the mask
+
+// function to scan folders/subfolders/files to find files with correct suffix
+function processFolder(input1, input2) {
+	list1 = getFileList(input1);
+	list1 = Array.sort(list1);
+	list2 = getFileList(input2);
+	list2 = Array.sort(list2);
+	if (list1.length == list2.length) {
+		for (i = 0; i < list1.length; i++) {
+			if(File.isDirectory(input1 + File.separator + list1[i]) && File.isDirectory(input2 + File.separator + list2[i]))
+				processFolder(input1 + File.separator + list1[i], input1 + File.separator + list1[i]);
+			if((endsWith(list1[i], suffix)) && (endsWith(list2[i], suffix)))
+				processFile(input1, input2, output, list1[i], list2[i]);
+		}
+	} else {
+	print("The two directories do not have the same # of files!");
+}
+}
+
+function processFile(input1, input2, output, file1, file2) {
+	// Do the processing here by adding your own code.
+	// Leave the print statements until things work, then remove them.
+
+print(input1);
+print(file1);
+print(input2);
+print(file2);
+
+setBatchMode(true);
+
+run("Bio-Formats", "open=[" + input1 + "/" + file1 + "]");
+
+run("Subtract Background...", "rolling=10");
+
+
+run("Bio-Formats", "open=[" + input2 + "/" + file2 + "]");
+
+imageCalculator("Transparent-zero create", file1, file2);
+
+setThreshold(0, 155);
+setOption("BlackBackground", false);
+run("Convert to Mask");
+
+// template example for running analyze particles in selected areas
+run("Analyze Particles...", "size=20-70 circularity=0.50-1.00 show=Masks display in_situ");
+      
+      
+ 
+saveAs("Tiff", output+list1[i]);
+
+
+	
+	print("Processing: " + input1 + File.separator + file1);
+	print("Processing: " + input2 + File.separator + file2);
+	print("Saving to: " + output);
+}
