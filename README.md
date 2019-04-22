@@ -1,2 +1,2 @@
 # FIJI_colocalisation-via-mask
-Batch processing: analyse one channel based on mask from another.
+Batch image segmentation and analysis: analyse one channel based on mask from another.
